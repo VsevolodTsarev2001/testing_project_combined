@@ -62,6 +62,7 @@
           lisa
         )
       : lisa;
+      console.log("GA Event:", nimi, baas);
     window.gtag("event", nimi, {
       ...baas,
       sessioonId: aktiivne.sessioonId,
