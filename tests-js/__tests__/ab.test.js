@@ -36,3 +36,36 @@ describe("A/B loogika", () => {
   });
 });
 
+// salvestamine
+describe("salvestamine", () => {
+  // beforeEach: loome enne iga testi lihtsa mock localStorage meetoditega setItem, getItem ja clear
+  beforeEach(() => {
+    // lihtne mock localStorage jaoks
+    global.localStorage = {
+      store: {},
+      // setItem salvestab väärtuse võtme järgi salvestusse
+      setItem(key, value) { 
+        this.store[key] = value; 
+      },
+      // getItem tagastab väärtuse võtme järgi store'ist
+      getItem(key) { 
+        return this.store[key]; 
+      },
+      // clear puhastab store
+      clear() { 
+        this.store = {}; 
+      }
+    };
+  });
+  // kontrollib, et andmed salvestatakse korrektselt localStorage'isse
+  test("andmete salvestamine localStorage-sse", () => {
+    const data = { variant: "variant_a", sessioonId: "sess-123" };
+    // Salvestame objekti localStorage'is võtme ‚ab_data‘ all
+    localStorage.setItem("ab_data", JSON.stringify(data));
+    // Saame salvestatud andmed ja parsimine tagasi objektisse
+    const salvestatud = JSON.parse(localStorage.getItem("ab_data"));
+    // Kontrollime, et andmed on korrektselt salvestatud
+    expect(salvestatud.variant).toBe("variant_a");
+    expect(salvestatud.sessioonId).toBe("sess-123");
+  });
+});

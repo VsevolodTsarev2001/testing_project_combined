@@ -179,8 +179,6 @@
 3. Välise API tõrge põhjustab vastuse koodiga **502**.  
 4. Logid salvestatakse Pytesti jooksutamisel.
 
-### Kontrollpunktid
-
 | Kontrollpunkt | Kriteerium |
 |----------------|------------|
 | TestClient töötab | `client.get()` tagastab 200 / 502 |
@@ -212,7 +210,8 @@
 ## 6. Testkeskkonnad ja andmed
 
 - Python: 3.10+ (HTTP server) 
-- Käivitamise käsk: `pytest tests-python -v`
+- Käivitamise käsk: `pytest tests-python -v` 
+- salvestamine pytest.log-faili `pytest tests-python -v --capture=no > docs/results/pytest/pytest.log 2>&1` 
 
 ---
 
@@ -231,3 +230,88 @@
 - logi on loodud
 
 ---
+
+# Testplan – Task 5: JavaScript testid
+
+## 1. Sissejuhatus
+
+**Projekti nimi:** Kvaliteedijälg – FastAPI frontend A/B testid  
+
+**Eesmärk:** tagada frontend/ab.js funktsioonide korrektne testimine Jest abil Node.js keskkonnas
+
+---
+
+## 2. Ulatus
+
+**Kaasatud moodulid:**  
+- Frontend (`frontend/ab.js`)  
+  - valiVariant()  
+  - vahetaVariant()  
+  - looLayoutHTML()  
+  - looSyndmuseKeha()  
+  - localStorage salvestusloogika  
+- Testid kaustas `tests-js/`  
+- Logi fail `docs/results/jest/jest.log`
+
+---
+
+## 3. Nõuded ja aktsepteerimiskriteeriumid
+
+### Funktsionaalsed nõuded
+1. `valiVariant` tagastab olemasoleva variandi
+2. `vahetaVariant` muudab varianti korrektselt.  
+3. `looSyndmuseKeha` lisab sündmuse metaandmed.  
+4. Andmete salvestamine `localStorage`-sse toimub mock-objekti ja fallbacki kaudu.  
+5. Logid salvestatakse testide käivitamisel.
+
+| Kontrollpunkt | Kriteerium |
+|----------------|------------|
+| Funktsioonide testimine | valiVariant, vahetaVariant, looLayoutHTML, looSyndmuseKeha töötavad ootuspäraselt |
+| localStorage mock | andmete salvestamine ja tagasivõtmine töötab fallback-mockiga |
+| Skeemi kontroll | looSyndmuseKeha sisaldab variant, katsestaadium, sessioonId |
+| Logi olemasolu | docs/results/jest/jest.log on loodud |
+
+---
+
+## 4. Riskid ja maandus
+
+| Kirjeldus | Mõju | Tõenäosus | Maandus |
+|-----------|-------|------------|---------|
+| Funktsioonid muutuvad | Testid kukuvad läbi | Keskmine | Testide hooldus ja uuendamine |
+| localStorage ei tööta | Andmete salvestus ebaõnnestub | Madal | Mock ja fallback-loogika |
+| Jest ei käivitu | Node.js keskkonna probleem | Keskmine | Kontrollida Node ja npm versiooni |
+| Logi ei salvestu | Testplaani rikkumine | Madal | Suunata Jest väljund logifaili |
+
+---
+
+## 5. Meetodid ja tööriistad
+ 
+- Jest — ühik- ja integratsioonitestid Node.js-is
+- Mockimine— `global.localStorage` lihtsa objektina
+- npm test — testide käivitamine
+- Logi salvestamine — väljundi suunamine `docs/results/jest/jest.log`
+
+---
+
+## 6. Testkeskkonnad ja andmed
+
+- Node.js 18+  
+- npm 9+  
+- Käivitamise käsk: `cd tests-js`, `npm install`, `npm test`
+- salvestamine jest.log-faili `npm test > ..\docs\results\jest\jest.log 2>&1` 
+
+---
+
+## 7. Ajajoon ja vastutajad
+| Tegevus | Vastutaja | Aeg |
+|----------|---------------|-------|
+| Testide kirjutamine | Daria | 10 -15 min |
+| Npm testi käivitamine + logi salvestamine | Daria | 5 min |
+
+---
+
+## 8. Raporteerimine
+
+- Tulemused salvestatakse: `docs/results/jest/jest.log`
+- kõik testid on rohelised
+- logi on loodud
