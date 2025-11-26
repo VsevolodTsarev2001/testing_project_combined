@@ -53,27 +53,37 @@ def tervise_kontroll() -> Dict[str, str]:
 @rakendus.get("/api/koond")
 def koonda_andmed() -> Dict[str, Any]:
     """Kombineerib JSONPlaceholderi ja Rick & Morty andmed testitavasse struktuuri."""
-    postitus = hanki_andmed(JSONPLACEHOLDER_URL)
-    tegelane = hanki_andmed(RICK_MORTY_URL)
+    allikad = [JSONPLACEHOLDER_URL, RICK_MORTY_URL]
+    try:
+        postitus = hanki_andmed(JSONPLACEHOLDER_URL)
+        tegelane = hanki_andmed(RICK_MORTY_URL)
 
-    logger.info(
-        "Koondan API vastuseid",
-        extra={"allikad": [JSONPLACEHOLDER_URL, RICK_MORTY_URL]},
-    )
-
-    koond = {
-        "postitus": {
-            "id": postitus.get("id"),
-            "pealkiri": postitus.get("title"),
-            "katkend": postitus.get("body", "")[:80],
-        },
-        "tegelane": {
-            "id": tegelane.get("id"),
-            "nimi": tegelane.get("name"),
-            "staatuse": tegelane.get("status"),
-        },
-        "allikad": [JSONPLACEHOLDER_URL, RICK_MORTY_URL],
-        "paastikuAeg": datetime.now(timezone.utc).isoformat(),
-    }
-
-    return koond
+        koond = {
+            "postitus": {
+                "id": postitus.get("id"),
+                "pealkiri": postitus.get("title"),
+                "katkend": postitus.get("body", "")[:80],
+            },
+            "tegelane": {
+                "id": tegelane.get("id"),
+                "nimi": tegelane.get("name"),
+                "staatuse": tegelane.get("status"),
+            },
+            "allikad": allikad,
+            "paastikuAeg": datetime.now(timezone.utc).isoformat(),
+        }
+        logger.info("Koondatud API vastused edukalt", extra={"allikad": allikad})
+        return koond
+    except HTTPException as viga:
+        logger.error("Koondamise käigus ilmnes viga", exc_info=viga, extra={"allikad": allikad})
+        raise viga
+    except Exception as viga:
+        logger.critical("Ettearvamatu viga koondamisel", exc_info=viga, extra={"allikad": allikad})
+        raise HTTPException(
+            status_code=502,
+            detail={
+                "sonum": "Sisene serveri viga koondamisel",
+                "allikad": allikad,
+                "pohjus": str(viga),
+            },
+        ) from viga
