@@ -3,8 +3,11 @@
 from fastapi.testclient import TestClient
 import pytest
 import responses
+import time
 
 from backend.main import JSONPLACEHOLDER_URL, RICK_MORTY_URL, rakendus
+
+
 
 client = TestClient(rakendus)
 
